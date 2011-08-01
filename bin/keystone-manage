@@ -78,7 +78,7 @@ def Main():
         parser.error('No object type specified for first argument')
 
     object_type = args[0]
-    if object_type in ['user', 'tenant', 'role', 'endpointTemplates', 'token',
+    if object_type in ['user', 'tenant', 'role', 'service' , 'endpointTemplates', 'token',
             'endpoint']:
         pass
     else:
@@ -382,6 +382,29 @@ def Main():
             except Exception, e:
                 raise Exception("Failed to delete token %s" % (object_id,), sys.exc_info())
             return
+    elif object_type == "service":
+            if command == "add":
+                try:
+                    object = db_models.Service()
+                    object.id = object_id
+                    db_api.service.create(object)
+                    print "SUCCESS: Service %s created successfully." % object.id
+                    return
+                except Exception as exc:
+                    raise Exception("Failed to create Service %s" % (object_id,), sys.exc_info())
+            elif command == "list":
+                try:
+                    objects = db_api.service.get_all()
+                    if objects == None:
+                        raise IndexError("Services not found")
+                    print objects
+                    print 'All Services'
+                    print 'Service'
+                    print '-' * 20
+                    for row in objects:
+                        print row.id
+                except Exception, e:
+                    raise Exception("Error getting all services", sys.exc_info())
 
     # Command not handled
     print ("ERROR: %s %s not yet supported" % (object_type, command))

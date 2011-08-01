@@ -105,6 +105,11 @@ class Role(Base, KeystoneBase):
     id = Column(String(255), primary_key=True, unique=True)
     desc = Column(String(255))
 
+class Service(Base, KeystoneBase):
+    __tablename__ = 'services'
+    __api__ = 'service'
+    id = Column(String(255), primary_key=True, unique=True)
+    desc = Column(String(255))
 
 class Tenant(Base, KeystoneBase):
     __tablename__ = 'tenants'

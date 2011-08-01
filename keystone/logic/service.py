@@ -24,6 +24,7 @@ from keystone.logic.types import fault
 from keystone.logic.types.tenant import \
     Tenant, Tenants, User as TenantUser
 from keystone.logic.types.role import Role, RoleRef, RoleRefs, Roles
+from keystone.logic.types.service import Service, Services
 from keystone.logic.types.user import User, User_Update, Users
 from keystone.logic.types.endpoint import Endpoint, Endpoints, \
     EndpointTemplate, EndpointTemplates
@@ -682,3 +683,56 @@ class IdentityService(object):
         self.__validate_admin_token(admin_token)
         api.endpoint_template.endpoint_delete(endpoint_id)
         return None
+    
+    #Service Operations
+    def create_service(self, admin_token, service):
+        self.__validate_admin_token(admin_token)
+
+        if not isinstance(service, Service):
+            raise fault.BadRequestFault("Expecting a Service")
+
+        if service.service_id == None:
+            raise fault.BadRequestFault("Expecting a Service Id")
+
+        if api.service.get(service.service_id) != None:
+            raise fault.ServiceConflictFault(
+                "A service with that id already exists")
+        dservice = models.Service()
+        dservice.id = service.service_id
+        dservice.desc = service.desc
+        api.service.create(dservice)
+        return service
+
+    def get_services(self, admin_token, marker, limit, url):
+        self.__validate_admin_token(admin_token)
+
+        ts = []
+        dservices = api.service.get_page(marker, limit)
+        for dservice in dservices:
+            ts.append(Service(dservice.id,
+                                     dservice.desc))
+        prev, next = api.service.get_page_markers(marker, limit)
+        links = []
+        if prev:
+            links.append(atom.Link('prev', "%s?'marker=%s&limit=%s'" \
+                                                % (url, prev, limit)))
+        if next:
+            links.append(atom.Link('next', "%s?'marker=%s&limit=%s'" \
+                                                % (url, next, limit)))
+        return Services(ts, links)
+
+    def get_service(self, admin_token, service_id):
+        self.__validate_admin_token(admin_token)
+
+        dservice = api.service.get(service_id)
+        if not dservice:
+            raise fault.ItemNotFoundFault("The service could not be found")
+        return Service(dservice.id, dservice.desc)
+
+    def delete_service(self, admin_token, service_id):
+        self.__validate_admin_token(admin_token)
+        dservice = api.service.get(service_id)
+        if not dservice:
+            raise fault.ItemNotFoundFault("The service could not be found")
+        api.service.delete(service_id)
+    

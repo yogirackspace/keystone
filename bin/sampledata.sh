@@ -69,3 +69,6 @@
 `dirname $0`/keystone-manage $* endpoint add 1234 3
 `dirname $0`/keystone-manage $* endpoint add 1234 4
 `dirname $0`/keystone-manage $* endpoint add 1234 5
+
+#Add Services
+`dirname $0`/keystone-manage $* service add nova

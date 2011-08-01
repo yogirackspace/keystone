@@ -5,6 +5,7 @@ import keystone.backends as db
 from keystone.controllers.auth import AuthController
 from keystone.controllers.endpointtemplates import EndpointTemplatesController
 from keystone.controllers.roles import RolesController
+from keystone.controllers.services import ServicesController
 from keystone.controllers.staticfiles import StaticFilesController
 from keystone.controllers.tenant import TenantController
 from keystone.controllers.user import UserController
@@ -104,6 +105,7 @@ class AdminApi(wsgi.Router):
         mapper.connect("/v2.0/users/{user_id}/roleRefs/{role_ref_id}",
             controller=roles_controller, action="delete_role_ref",
             conditions=dict(method=["DELETE"]))
+
         #EndpointTemplatesControllers and Endpoints
         endpoint_templates_controller = EndpointTemplatesController(options)
         mapper.connect("/v2.0/endpointTemplates",
@@ -152,5 +154,12 @@ class AdminApi(wsgi.Router):
                     controller=static_files_controller,
                     action="get_xsd_atom_contract",
                     conditions=dict(method=["GET"]))
+
+        # Services Controller
+        services_controller = ServicesController(options)
+        mapper.connect("/v2.0/services", controller=services_controller,
+                    action="get_services", conditions=dict(method=["GET"]))
+        mapper.connect("/v2.0/services/{service_id}", controller=services_controller,
+                    action="get_service", conditions=dict(method=["GET"]))
 
         super(AdminApi, self).__init__(mapper)

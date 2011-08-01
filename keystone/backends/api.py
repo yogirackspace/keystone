@@ -270,6 +270,22 @@ class BaseEndpointTemplateAPI(object):
     def endpoint_delete(self, id):
         raise NotImplementedError
 
+class BaseServiceAPI:
+    def create(self, values):
+        raise NotImplementedError
+
+    def get(self, id):
+        raise NotImplementedError
+
+    def get_all(self):
+        raise NotImplementedError
+
+    def get_page(self, marker, limit):
+        raise NotImplementedError
+
+    def get_page_markers(self, marker, limit):
+        raise NotImplementedError
+
 #API
 #TODO(Yogi) Refactor all API to separate classes specific to models.
 endpoint_template = BaseEndpointTemplateAPI()
@@ -279,6 +295,7 @@ tenant_group = BaseTenantGroupAPI()
 tenant = BaseTenantAPI()
 token = BaseTokenAPI()
 user = BaseUserAPI()
+service = BaseServiceAPI()
 
 # Function to dynamically set module references.
 def set_value(variable_name, value):
@@ -303,3 +320,6 @@ def set_value(variable_name, value):
     elif variable_name == 'user':
         global user
         user = value
+    elif variable_name == 'service':
+        global service
+        service = value
