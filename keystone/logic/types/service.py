@@ -38,7 +38,7 @@ class Service(object):
             desc = root.get("description")
             if service_id == None:
                 raise fault.BadRequestFault("Expecting Service")
-            return service(service_id, desc)
+            return Service(service_id, desc)
         except etree.LxmlError as e:
             raise fault.BadRequestFault("Cannot parse service", str(e))
 
@@ -56,7 +56,7 @@ class Service(object):
             if service_id == None:
                 raise fault.BadRequestFault("Expecting service")
             desc = service["description"]
-            return service(service_id, desc)
+            return Service(service_id, desc)
         except (ValueError, TypeError) as e:
             raise fault.BadRequestFault("Cannot parse service", str(e))
 

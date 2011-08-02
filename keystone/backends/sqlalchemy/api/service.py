@@ -18,31 +18,32 @@
 from keystone.backends.sqlalchemy import get_session, models
 from keystone.backends.api import BaseServiceAPI
 
+
 class ServiceAPI(BaseServiceAPI):
+    def __init__(self):
+        pass
+    
     def create(self, values):
         service_ref = models.Service()
         service_ref.update(values)
         service_ref.save()
         return service_ref
-    
+
     def get(self, id, session=None):
         if not session:
             session = get_session()
         result = session.query(models.Service).filter_by(id=id).first()
         return result
-    
-    
+
     def get_all(self, session=None):
         print "Enter Get All Service"
         if not session:
             session = get_session()
         return session.query(models.Service).all()
-    
-    
+
     def get_page(self, marker, limit, session=None):
         if not session:
             session = get_session()
-    
         if marker:
             return session.query(models.Service).filter("id>:marker").params(\
                     marker='%s' % marker).order_by(\
@@ -50,8 +51,7 @@ class ServiceAPI(BaseServiceAPI):
         else:
             return session.query(models.Service).order_by(\
                                 models.Service.id.desc()).limit(limit).all()
-    
-    
+
     def get_page_markers(self, marker, limit, session=None):
         if not session:
             session = get_session()
@@ -63,10 +63,12 @@ class ServiceAPI(BaseServiceAPI):
             return (None, None)
         if marker is None:
             marker = first.id
-        next_page = session.query(models.Service).filter("id > :marker").params(\
+        next_page = session.query(models.Service).\
+                        filter("id > :marker").params(\
                         marker='%s' % marker).order_by(\
                         models.Service.id).limit(limit).all()
-        prev_page = session.query(models.Service).filter("id < :marker").params(\
+        prev_page = session.query(models.Service).\
+                        filter("id < :marker").params(\
                         marker='%s' % marker).order_by(\
                         models.Service.id.desc()).limit(int(limit)).all()
         if len(next_page) == 0:
@@ -88,13 +90,14 @@ class ServiceAPI(BaseServiceAPI):
         else:
             next_page = next_page.id
         return (prev_page, next_page)
-    
+
     def delete(self, id, session=None):
         if not session:
             session = get_session()
         with session.begin():
             service_ref = self.get(id, session)
             session.delete(service_ref)
+
 
 def get():
     return ServiceAPI()

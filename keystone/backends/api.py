@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 #Base APIs
 class BaseUserAPI(object):
     def get_all(self):
@@ -123,10 +124,10 @@ class BaseTenantGroupAPI(object):
     def get(self, id, tenant):
         raise NotImplementedError
 
-    def get_page(self, tenantId, marker, limit):
+    def get_page(self, tenant_id, marker, limit):
         raise NotImplementedError
 
-    def get_page_markers(self, tenantId, marker, limit):
+    def get_page_markers(self, tenant_id, marker, limit):
         raise NotImplementedError
 
     def update(self, id, tenant_id, values):
@@ -270,6 +271,7 @@ class BaseEndpointTemplateAPI(object):
     def endpoint_delete(self, id):
         raise NotImplementedError
 
+
 class BaseServiceAPI:
     def create(self, values):
         raise NotImplementedError
@@ -287,7 +289,6 @@ class BaseServiceAPI:
         raise NotImplementedError
 
 #API
-#TODO(Yogi) Refactor all API to separate classes specific to models.
 endpoint_template = BaseEndpointTemplateAPI()
 group = BaseGroupAPI()
 role = BaseRoleAPI()
@@ -296,6 +297,7 @@ tenant = BaseTenantAPI()
 token = BaseTokenAPI()
 user = BaseUserAPI()
 service = BaseServiceAPI()
+
 
 # Function to dynamically set module references.
 def set_value(variable_name, value):

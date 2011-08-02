@@ -20,7 +20,6 @@ class AdminApi(wsgi.Router):
         mapper = routes.Mapper()
 
         db.configure_backends(options)
-        
         # Token Operations
         auth_controller = AuthController(options)
         mapper.connect("/v2.0/tokens", controller=auth_controller,
@@ -159,7 +158,15 @@ class AdminApi(wsgi.Router):
         services_controller = ServicesController(options)
         mapper.connect("/v2.0/services", controller=services_controller,
                     action="get_services", conditions=dict(method=["GET"]))
-        mapper.connect("/v2.0/services/{service_id}", controller=services_controller,
-                    action="get_service", conditions=dict(method=["GET"]))
+        mapper.connect("/v2.0/services", controller=services_controller,
+                    action="create_service", conditions=dict(method=["POST"]))
+        mapper.connect("/v2.0/services/{service_id}",\
+                    controller=services_controller,
+                        action="delete_service",
+                            conditions=dict(method=["DELETE"]))
+        mapper.connect("/v2.0/services/{service_id}",
+                       controller=services_controller,
+                            action="get_service",
+                                conditions=dict(method=["GET"]))
 
         super(AdminApi, self).__init__(mapper)
